@@ -1,12 +1,11 @@
 # CJR Track – Conference & Journal Finder
 
 [![GitHub license](https://img.shields.io/github/license/jluisvim/cjr-track)](LICENSE)
-[![GitHub Pages](https://img.shields.io/badge/website-live-green)](https://jluisvim.github.io/cjr-track/)
 
 > **CJR Track** is a minimalistic academic tool for discovering and tracking conferences and journals in logic, artificial intelligence, and related fields. 
 It is a platform that aggregates academic conferences and journals from multiple sources into a unified, searchable interface. Designed for researchers, academics, and industry professionals.
 <!--It was originally designed to parse call-for-papers data from [EasyChair CFP](https://easychair.org/cfp/ ) and generate clean HTML reports with filtered results and metrics. --> 
-URL : https://jluisvim.github.io/cjr-track/docs
+URL: [@cjr-track](https://jluisvim.github.io/cjr-track/docs)
 
 ---
 
@@ -57,6 +56,6 @@ While this version focuses on static HTML display, future versions will include:
 For all inquiries and improvement suggestions:
 <!--If you have suggestions, questions, or want to contribute to CJR Track development:-->
 
-- GitHub: [@jluisvim](https://github.com/jluisvim)
+- [@jluisvim](https://jluisvim.github.io/)
 <!--- Email: jluisvim@protonmail.com-->
 
