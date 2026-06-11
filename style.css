@@ -1,0 +1,787 @@
+/* ============================================
+   CONFERENCE & JOURNAL TRACKER
+   Pastel colors | Color-blind friendly
+   No icons (⚠ ✓ removed)
+   ============================================ */
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+/* Typography */
+h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+}
+
+/* Accessibility Legend - Color-blind friendly */
+.accessibility-note {
+    background: #f0f0f0;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    color: #444;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+.accessibility-note span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.accessibility-legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.color-dot.blue { background-color: #8DB5D6; }      /* Pastel blue - Active */
+.color-dot.orange { background-color: #F0C987; }    /* Pastel orange - Closing */
+.color-dot.gray { background-color: #C4C4C4; }      /* Pastel gray - Expired */
+.color-dot.mint { background-color: #A8E6CF; }      /* Pastel mint - Journal */
+.color-dot.lavender { background-color: #C5A3FF; }  /* Pastel lavender - Conference */
+
+/* Search Bar */
+.search-bar {
+    margin-bottom: 24px;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 340px;
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    border-color: #8DB5D6;
+    box-shadow: 0 0 0 3px rgba(141, 181, 214, 0.2);
+}
+
+/* Section Headers */
+.section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111;
+}
+
+.section-count {
+    font-size: 0.8rem;
+    color: #666;
+    background: #e8e8e8;
+    padding: 2px 10px;
+    border-radius: 30px;
+}
+
+/* Tables */
+.table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+th {
+    text-align: left;
+    padding: 14px 16px;
+    background: #f8f8f8;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    vertical-align: middle;
+}
+
+th:first-child,
+td:first-child {
+    padding-left: 20px;
+}
+
+th:last-child,
+td:last-child {
+    padding-right: 20px;
+}
+
+/* ============================================
+   PASTEL ROW BACKGROUND COLORS
+   No icons - clean and minimalist
+   ============================================ */
+
+/* ACTIVE - Pastel Blue background */
+.row-active {
+    background-color: #EBF3FA;
+}
+
+.row-active:hover td {
+    background-color: #DFECF5;
+}
+
+/* CLOSING SOON - Pastel Orange/Peach background */
+.row-closing {
+    background-color: #FEF7E9;
+}
+
+.row-closing:hover td {
+    background-color: #FDF0D9;
+}
+
+/* EXPIRED/CLOSED - Pastel Gray background */
+.row-expired {
+    background-color: #F5F5F5;
+    opacity: 0.85;
+}
+
+.row-expired:hover td {
+    background-color: #EBEBEB;
+}
+
+/* Title cell with wrapper */
+.title-cell {
+    min-width: 220px;
+}
+
+.title-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ============================================
+   PASTEL TYPE BADGES
+   Conference: Lavender | Journal: Mint
+   ============================================ */
+
+.type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 12px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Conference - Pastel Lavender */
+.type-conference {
+    background-color: #C5A3FF;
+    color: #3A2A5A;
+}
+
+/* Journal - Pastel Mint */
+.type-journal {
+    background-color: #A8E6CF;
+    color: #2A5A4A;
+}
+
+/* Links */
+a {
+    color: #4A6A8A;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #2A4A6A;
+}
+
+/* Keywords - subtle pastel */
+.keyword-tag {
+    display: inline-block;
+    background: #EFEFEF;
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    margin: 2px 3px;
+    white-space: nowrap;
+    color: #555;
+}
+
+/* Date & Days indicators */
+.days {
+    font-weight: 500;
+    white-space: nowrap;
+    font-size: 0.75rem;
+}
+
+.days-positive {
+    color: #5A8A5A;
+}
+
+.days-warning {
+    color: #D4A030;
+    font-weight: 600;
+}
+
+.days-zero {
+    color: #C44A3A;
+    font-weight: 600;
+}
+
+.days-negative {
+    color: #999;
+}
+
+.date-main {
+    font-weight: 500;
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
+
+.date-sub {
+    font-size: 0.7rem;
+    color: #777;
+    margin-top: 4px;
+}
+
+/* Empty row */
+.empty-row td {
+    text-align: center;
+    color: #999;
+    padding: 48px;
+}
+
+/* Footer */
+footer {
+    margin-top: 48px;
+    padding: 24px 0 16px;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.copyright {
+    margin-bottom: 8px;
+}
+
+.license-info {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: #888;
+}
+
+.feedback {
+    margin-top: 8px;
+}
+
+.email-link {
+    color: #6A8AAA;
+    text-decoration: none;
+}
+
+.email-link:hover {
+    text-decoration: underline;
+    color: #4A6A8A;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+    
+    th, td {
+        padding: 10px 12px;
+    }
+    
+    th:first-child,
+    td:first-child {
+        padding-left: 12px;
+    }
+    
+    th:last-child,
+    td:last-child {
+        padding-right: 12px;
+    }
+    
+    /* Hide keywords on mobile for cleaner view */
+    .keywords-cell {
+        display: none;
+    }
+    
+    th:nth-child(6),
+    td:nth-child(6) {
+        display: none;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .accessibility-note {
+        font-size: 0.65rem;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    /* Hide abstract column on very small screens */
+    th:nth-child(4),
+    td:nth-child(4) {
+        display: none;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+    
+    .search-bar,
+    .accessibility-note {
+        display: none;
+    }
+    
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    
+    .table-wrapper {
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+    
+    a {
+        color: black;
+        text-decoration: none;
+    }
+    
+    .row-expired {
+        opacity: 0.6;
+    }
+    
+    /* Print backgrounds */
+    .row-active {
+        background-color: #EBF3FA !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .row-closing {
+        background-color: #FEF7E9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .row-expired {
+        background-color: #F5F5F5 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ============================================
+   DARK MODE - Pastel adapted
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1a1a1a;
+    }
+    
+    h1, .section-title {
+        color: #eee;
+    }
+    
+    .subtitle {
+        color: #aaa;
+    }
+    
+    .table-wrapper {
+        background: #2d2d2d;
+        border-color: #444;
+    }
+    
+    th {
+        background: #383838;
+        color: #eee;
+        border-bottom-color: #555;
+    }
+    
+    td {
+        border-bottom-color: #3a3a3a;
+        color: #ddd;
+    }
+    
+    .section-header {
+        border-bottom-color: #444;
+    }
+    
+    .section-count {
+        background: #444;
+        color: #ccc;
+    }
+    
+    .keyword-tag {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ccc;
+    }
+    
+    .search-input {
+        background: #2d2d2d;
+        border-color: #555;
+        color: #ddd;
+    }
+    
+    .search-input:focus {
+        border-color: #8DB5D6;
+    }
+    
+    footer {
+        border-top-color: #444;
+        color: #aaa;
+    }
+    
+    .email-link {
+        color: #8DB5D6;
+    }
+    
+    .empty-row td {
+        color: #888;
+    }
+    
+    .accessibility-note {
+        background: #2d2d2d;
+        color: #ccc;
+    }
+    
+    /* Dark mode row backgrounds - pastel adaptados */
+    .row-active {
+        background-color: #1E3A4A;
+    }
+    
+    .row-active:hover td {
+        background-color: #254B5E;
+    }
+    
+    .row-closing {
+        background-color: #3A2E1A;
+    }
+    
+    .row-closing:hover td {
+        background-color: #4A3A22;
+    }
+    
+    .row-expired {
+        background-color: #252525;
+    }
+    
+    .row-expired:hover td {
+        background-color: #303030;
+    }
+    
+    /* Type badges dark mode */
+    .type-conference {
+        background-color: #7B5AAA;
+        color: #E8DDFF;
+    }
+    
+    .type-journal {
+        background-color: #5A9A7A;
+        color: #DDFFEE;
+    }
+    
+    .date-sub {
+        color: #aaa;
+    }
+    
+    .days-positive {
+        color: #8ABA8A;
+    }
+    
+    .days-negative {
+        color: #aaa;
+    }
+    
+    .days-warning {
+        color: #F0B040;
+    }
+    
+    .days-zero {
+        color: #E06A5A;
+    }
+    
+    a {
+        color: #8DB5D6;
+    }
+    
+    a:hover {
+        color: #AAC9E8;
+    }
+}
+
+/* Date & Time display - UTC-12 */
+.datetime-local {
+    font-size: 0.8rem;
+    color: #555;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    padding: 5px 0;
+    border-bottom: 1px dashed #e0e0e0;
+    display: inline-block;
+}
+
+
+/* ============================================
+   EXPORT SELECTION BAR STYLES
+   ============================================ */
+
+.export-selection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: #f0f4f8;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.selection-info {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.selection-info span {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #4A6A8A;
+}
+
+.export-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.export-btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    background-color: #4A6A8A;
+}
+
+.export-btn:hover {
+    background-color: #3A5A7A;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.clear-btn {
+    padding: 8px 18px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+    color: #666;
+}
+
+.clear-btn:hover {
+    background: #f0f0f0;
+    border-color: #999;
+}
+
+/* Checkbox styling */
+th input[type="checkbox"],
+td input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #4A6A8A;
+}
+
+
+/* Export hint / tip message */
+.export-hint {
+    font-size: 0.7rem;
+    color: #5a6e7c;
+    background: rgba(74, 106, 138, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-top: 8px;
+    width: 100%;
+    text-align: center;
+    border-left: 3px solid #4A6A8A;
+}
+
+.export-hint strong {
+    color: #4A6A8A;
+}
+
+/* Dark mode for hint */
+@media (prefers-color-scheme: dark) {
+    .export-hint {
+        color: #aab8c5;
+        background: rgba(141, 181, 214, 0.1);
+        border-left-color: #8DB5D6;
+    }
+    
+    .export-hint strong {
+        color: #8DB5D6;
+    }
+}
+
+/* Responsive: stack hint on mobile */
+@media (max-width: 768px) {
+    .export-selection-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .export-hint {
+        text-align: left;
+        font-size: 0.65rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .export-selection-bar {
+        background: #2a2a2a;
+        border-color: #444;
+    }
+    
+    .selection-info {
+        color: #ccc;
+    }
+    
+    .selection-info span {
+        color: #8DB5D6;
+    }
+    
+    .clear-btn {
+        background: #3a3a3a;
+        border-color: #555;
+        color: #ccc;
+    }
+    
+    .clear-btn:hover {
+        background: #4a4a4a;
+    }
+    
+    .export-btn {
+        background-color: #5A7A9A;
+    }
+    
+    .export-btn:hover {
+        background-color: #6A8AAA;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .datetime-local {
+        color: #aaa;
+        border-bottom-color: #444;
+    }
+}
+
+/* ============================================
+   HIGH CONTRAST MODE (Windows)
+   ============================================ */
+
+@media (forced-colors: active) {
+    .type-badge {
+        border: 1px solid CanvasText;
+    }
+}

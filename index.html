@@ -1,391 +1,518 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
+    <title>Conference & Journal Tracker</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Conferencias Académicas</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f8f9fa;
-            padding: 2rem 1rem;
-            color: #1a1a2e;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .subtitle {
-            color: #6c757d;
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Filtros - minimalistas */
-        .filters {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            background: white;
-            padding: 0.25rem;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-
-        .filter-btn {
-            padding: 0.375rem 0.875rem;
-            font-size: 0.8rem;
-            background: transparent;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-
-        .filter-btn.active {
-            background: #1a1a2e;
-            color: white;
-        }
-
-        .filter-btn:hover:not(.active) {
-            background: #e9ecef;
-        }
-
-        .search-box {
-            padding: 0.375rem 0.875rem;
-            font-size: 0.8rem;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            width: 250px;
-            font-family: inherit;
-        }
-
-        .stats {
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-bottom: 0.75rem;
-        }
-
-        /* Tabla - minimalista */
-        .table-wrapper {
-            overflow-x: auto;
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-
-        th {
-            text-align: left;
-            padding: 0.875rem 0.75rem;
-            background: #f8f9fa;
-            font-weight: 600;
-            border-bottom: 1px solid #dee2e6;
-            color: #495057;
-        }
-
-        td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        /* Enlaces */
-        a {
-            color: #1a1a2e;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Badges de estado */
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        .badge-open {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .badge-closing {
-            background: #fff3e0;
-            color: #e65100;
-        }
-
-        .badge-closed {
-            background: #eceff1;
-            color: #546e7a;
-        }
-
-        /* Alertas de fechas */
-        .deadline-urgent {
-            color: #c62828;
-            font-weight: 600;
-        }
-
-        .deadline-warning {
-            color: #e65100;
-        }
-
-        .deadline-safe {
-            color: #2e7d32;
-        }
-
-        /* Keywords */
-        .keywords {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-
-        .keyword {
-            background: #e9ecef;
-            padding: 0.125rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            white-space: nowrap;
-        }
-
-        /* Sin resultados */
-        .no-results {
-            text-align: center;
-            padding: 3rem;
-            color: #6c757d;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            
-            th, td {
-                padding: 0.5rem;
-            }
-            
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-box {
-                width: 100%;
-            }
-        }
-    </style>
+    <meta name="description" content="Track submission deadlines for academic conferences and journals">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <h1>📋 Conferencias Académicas</h1>
-    <div class="subtitle">Seguimiento de fechas límite para envío de trabajos</div>
+    <div class="container">
+        <header>
+            <h1>📋 Conference & Journal Tracker</h1>
+            <p class="subtitle">Track submission deadlines for academic conferences and journals</p>
+            <!-- Fecha y hora local UTC-12 -->
+            <div class="datetime-local" id="datetimeDisplay"></div>
+        </header>
 
-    <div class="filters">
-        <div class="filter-group">
-            <button class="filter-btn active" onclick="filterByStatus('all')">Todas</button>
-            <button class="filter-btn" onclick="filterByStatus('open')">Abiertas</button>
-            <button class="filter-btn" onclick="filterByStatus('closing-soon')">Cierre próximo</button>
+        <!-- Accessibility legend for color-blind users -->
+        <div class="accessibility-note">
+            <span>🎨 <strong>Accessible legend:</strong></span>
+            <span class="accessibility-legend"><span class="color-dot blue"></span> Active (open)</span>
+            <span class="accessibility-legend"><span class="color-dot orange"></span> Closing soon</span>
+            <span class="accessibility-legend"><span class="color-dot gray"></span> Expired/Closed</span>
+            <span class="accessibility-legend"><span class="color-dot mint"></span> Journal</span>
+            <span class="accessibility-legend"><span class="color-dot lavender"></span> Conference</span>
         </div>
-        <input type="text" id="searchInput" class="search-box" placeholder="Buscar por título, keyword o ubicación..." onkeyup="filterTable()">
+        
+        <!-- NUEVO: Export bar con selección y mensaje intuitivo -->
+        <div class="export-selection-bar">
+<!--             <div class="export-hint"> -->
+<!--                 💡 1️⃣ Select rows (☐)  →  2️⃣ Click "Export Selected"  →  📥 CSV file downloaded -->
+<!--             </div> -->
+            <div class="selection-info">
+                <span id="selectedCount">0</span> items selected
+            </div>
+            <div class="export-actions">
+                <button id="exportSelectedBtn" class="export-btn" style="background-color: #4A6A8A;">📄 Export Selected to CSV</button>
+                <button id="clearSelectionBtn" class="clear-btn">🗑️ Clear Selection</button>
+            </div>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by title, keywords, location..." onkeyup="renderBothTables()">
+        </div>
+        
+        <!-- Active Conferences & Journals Table -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-title">✅ Active Calls</span>
+                <span class="section-count" id="activeCount">0</span>
+            </div>
+            <div class="table-wrapper">
+                <table id="activeTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">
+                                <input type="checkbox" id="selectAllActive" title="Select all active">
+                            </th>
+                            <th>Title</th>
+                            <th>Location / Publisher</th>
+                            <th>Submission Deadline</th>
+                            <th>Abstract Deadline</th>
+                            <th>Event Date</th>
+                            <th>Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activeBody">
+                        <tr class="empty-row"><td colspan="7">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Expired Conferences & Journals Table -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-title">🔒 Expired / Closed</span>
+                <span class="section-count" id="expiredCount">0</span>
+            </div>
+            <div class="table-wrapper">
+                <table id="expiredTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">
+                                <input type="checkbox" id="selectAllExpired" title="Select all expired">
+                            </th>
+                            <th>Title</th>
+                            <th>Location / Publisher</th>
+                            <th>Submission Deadline</th>
+                            <th>Abstract Deadline</th>
+                            <th>Event Date</th>
+                            <th>Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expiredBody">
+                        <tr class="empty-row"><td colspan="7">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <div class="stats" id="stats"></div>
-
-    <div class="table-wrapper">
-        <table id="conferencesTable">
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>Ubicación</th>
-                    <th>Estado</th>
-                    <th>Sumisión</th>
-                    <th>Abstract</th>
-                    <th>Keywords</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="6" class="no-results">Cargando...</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    // ⚠️ REEMPLAZA con tu URL de Apps Script
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzYjLvISkl7pguM3zcq8oUZa_sMxqfDiCJo4rdPVUbjVz3LyaZG6ipim9Cx8PNoBCh5/exec';
     
-    let allConferences = [];
-    let currentStatus = 'all';
-    let currentSearch = '';
-
-    function formatDate(dateString) {
-        if (!dateString) return '—';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    }
-
-    function getDaysUntil(targetDate) {
-        if (!targetDate) return null;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const target = new Date(targetDate);
-        target.setHours(0, 0, 0, 0);
-        const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-        return diff;
-    }
-
-    function formatDeadlineCell(dateString) {
-        if (!dateString) return '<span style="color:#adb5bd;">—</span>';
+    <footer>
+        <div class="footer-content">
+            <div class="copyright">
+                © <span id="currentYear"></span> Conference Tracker
+            </div>
+            <div class="license-info">
+                <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener noreferrer" style="text-decoration: none;">
+                    <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="height: 1.2em; vertical-align: middle; margin-right: 2px;">
+                    <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="height: 1.2em; vertical-align: middle; margin: 0 2px;">
+                </a>
+                <span style="margin-left: 5px;">
+                    Code: MIT License · Data: 
+                    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener noreferrer" style="color: #0066cc; text-decoration: none;">
+                        CC BY 4.0
+                    </a>
+                </span>
+            </div>
+            <div class="copyright">
+                ✉️ Questions or feedback? 
+                <a href="mailto:conferences@tracker.com" class="email-link">conferences@tracker.com</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // ============================================
+        // CONFIGURATION - CHANGE THESE VALUES
+        // ============================================
         
-        const days = getDaysUntil(dateString);
-        const formattedDate = formatDate(dateString);
+        // ⚠️ REPLACE with your Google Apps Script URL (ends with /exec)
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzYjLvISkl7pguM3zcq8oUZa_sMxqfDiCJo4rdPVUbjVz3LyaZG6ipim9Cx8PNoBCh5/exec';
         
-        if (days < 0) {
-            return `<span style="color:#adb5bd;">${formattedDate}<br><span style="font-size:0.7rem;">(cerrada)</span></span>`;
-        }
-        if (days === 0) {
-            return `<span class="deadline-urgent">${formattedDate}<br><span style="font-size:0.7rem;">¡HOY!</span></span>`;
-        }
-        if (days <= 3) {
-            return `<span class="deadline-urgent">${formattedDate}<br><span style="font-size:0.7rem;">${days} días</span></span>`;
-        }
-        if (days <= 14) {
-            return `<span class="deadline-warning">${formattedDate}<br><span style="font-size:0.7rem;">${days} días</span></span>`;
-        }
-        return `<span class="deadline-safe">${formattedDate}<br><span style="font-size:0.7rem;">${days} días</span></span>`;
-    }
-
-    function getStatusBadge(status) {
-        if (status === 'open') return '<span class="badge badge-open">Abierta</span>';
-        if (status === 'closing-soon') return '<span class="badge badge-closing">Cierra pronto</span>';
-        return '<span class="badge badge-closed">Cerrada</span>';
-    }
-
-    function renderTable() {
-        let filtered = allConferences;
+        // ⚠️ REPLACE with your contact email
+        const CONTACT_EMAIL = 'conferences@tracker.com';
         
-        // Filtrar por estado
-        if (currentStatus !== 'all') {
-            filtered = filtered.filter(c => c.status === currentStatus);
-        }
+        // ============================================
+        // APPLICATION CODE
+        // ============================================
         
-        // Filtrar por búsqueda
-        if (currentSearch) {
-            const searchLower = currentSearch.toLowerCase();
-            filtered = filtered.filter(c => 
-                (c.Titulo && c.Titulo.toLowerCase().includes(searchLower)) ||
-                (c.PalabrasClave && c.PalabrasClave.toLowerCase().includes(searchLower)) ||
-                (c.Ubicacion && c.Ubicacion.toLowerCase().includes(searchLower)) ||
-                (c.Pais && c.Pais.toLowerCase().includes(searchLower))
-            );
-        }
+        let allData = [];
+        let refreshInterval = null;
+        let dateTimeInterval = null;
         
-        // Actualizar estadísticas
-        const openCount = filtered.filter(c => c.status === 'open').length;
-        const closingCount = filtered.filter(c => c.status === 'closing-soon').length;
-        document.getElementById('stats').innerHTML = `📊 ${filtered.length} conferencias | Abiertas: ${openCount} | Cierre próximo: ${closingCount}`;
+        // Store current items for export reference
+        let currentActiveItems = [];
+        let currentExpiredItems = [];
         
-        if (filtered.length === 0) {
-            document.getElementById('tableBody').innerHTML = '<tr><td colspan="6" class="no-results">No hay conferencias con esos criterios</td></tr>';
-            return;
-        }
-        
-        let html = '';
-        for (const conf of filtered) {
-            html += `
-                <tr>
-                    <td style="font-weight:500;">
-                        ${conf.Link ? `<a href="${conf.Link}" target="_blank">${conf.Titulo || 'Sin título'}</a>` : (conf.Titulo || 'Sin título')}
-                    </td>
-                    <td>
-                        ${conf.Ubicacion || '—'}${conf.Modalidad ? `<br><span style="font-size:0.7rem;color:#6c757d;">${conf.Modalidad}</span>` : ''}
-                    </td>
-                    <td>${getStatusBadge(conf.status)}</td>
-                    <td>${formatDeadlineCell(conf.FechaSumision)}</td>
-                    <td>${conf.FechaAbstracto ? formatDeadlineCell(conf.FechaAbstracto) : '<span style="color:#adb5bd;">—</span>'}</td>
-                    <td>
-                        ${conf.keywordsArray && conf.keywordsArray.length > 0 ? 
-                            `<div class="keywords">${conf.keywordsArray.slice(0, 3).map(kw => `<span class="keyword">${kw}</span>`).join('')}${conf.keywordsArray.length > 3 ? `<span class="keyword">+${conf.keywordsArray.length - 3}</span>` : ''}</div>` : 
-                            '<span style="color:#adb5bd;">—</span>'
-                        }
-                    </td>
-                </tr>
-            `;
-        }
-        document.getElementById('tableBody').innerHTML = html;
-    }
-
-    function filterByStatus(status) {
-        currentStatus = status;
-        renderTable();
-        
-        // Actualizar botón activo
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.textContent.trim().toLowerCase() === (status === 'all' ? 'todas' : (status === 'open' ? 'abiertas' : 'cierre próximo'))) {
-                btn.classList.add('active');
+        // Update email and year in footer
+        document.addEventListener('DOMContentLoaded', () => {
+            const emailLink = document.querySelector('.email-link');
+            if (emailLink) {
+                emailLink.href = `mailto:${CONTACT_EMAIL}`;
+                emailLink.textContent = CONTACT_EMAIL;
             }
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            
+            // Iniciar la visualización de fecha/hora local UTC-12
+            updateDateTime();
+            dateTimeInterval = setInterval(updateDateTime, 60000);
+            
+            // Setup export buttons
+            document.getElementById('exportSelectedBtn').addEventListener('click', exportSelectedToCSV);
+            document.getElementById('clearSelectionBtn').addEventListener('click', clearAllSelections);
         });
-    }
-
-    function filterTable() {
-        currentSearch = document.getElementById('searchInput').value;
-        renderTable();
-    }
-
-    async function loadConferences() {
-        try {
-            const response = await fetch(API_URL);
-            allConferences = await response.json();
-            renderTable();
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('tableBody').innerHTML = '<tr><td colspan="6" class="no-results">❌ Error al cargar datos. Verifica la URL del API.</td></tr>';
+        
+        // Función para mostrar fecha y hora UTC-12 sin segundos
+        function updateDateTime() {
+            const datetimeDisplay = document.getElementById('datetimeDisplay');
+            if (!datetimeDisplay) return;
+            
+            const now = new Date();
+            const utcMinus12 = new Date(now.getTime() - (12 * 60 * 60 * 1000));
+            
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            
+            const formattedDate = utcMinus12.toLocaleString('en-US', options);
+            datetimeDisplay.innerHTML = `🕘 Time (UTC-12): ${formattedDate}`;
         }
-    }
-
-    loadConferences();
-    setInterval(loadConferences, 3600000); // Actualizar cada hora
-</script>
+        
+        // NUEVO: Actualizar contador de selección
+        function updateSelectionCount() {
+            const activeCheckboxes = document.querySelectorAll('#activeBody input[type="checkbox"]');
+            const expiredCheckboxes = document.querySelectorAll('#expiredBody input[type="checkbox"]');
+            const allCheckboxes = [...activeCheckboxes, ...expiredCheckboxes];
+            const selectedCount = allCheckboxes.filter(cb => cb.checked).length;
+            
+            document.getElementById('selectedCount').innerText = selectedCount;
+            
+            // Update "Select All" checkboxes state
+            updateSelectAllCheckbox('active');
+            updateSelectAllCheckbox('expired');
+        }
+        
+        // NUEVO: Actualizar estado del checkbox "Seleccionar todo"
+        function updateSelectAllCheckbox(tableType) {
+            const tbodyId = tableType === 'active' ? 'activeBody' : 'expiredBody';
+            const selectAllId = tableType === 'active' ? 'selectAllActive' : 'selectAllExpired';
+            
+            const checkboxes = document.querySelectorAll(`#${tbodyId} input[type="checkbox"]`);
+            const selectAllCheckbox = document.getElementById(selectAllId);
+            
+            if (!selectAllCheckbox || checkboxes.length === 0) return;
+            
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+            
+            selectAllCheckbox.checked = allChecked;
+            selectAllCheckbox.indeterminate = someChecked && !allChecked;
+        }
+        
+        // NUEVO: Seleccionar o deseleccionar todos los de una tabla
+        function selectAllInTable(tableType, isChecked) {
+            const tbodyId = tableType === 'active' ? 'activeBody' : 'expiredBody';
+            const checkboxes = document.querySelectorAll(`#${tbodyId} input[type="checkbox"]`);
+            checkboxes.forEach(cb => cb.checked = isChecked);
+            updateSelectionCount();
+        }
+        
+        // NUEVO: Limpiar todas las selecciones
+        function clearAllSelections() {
+            const allCheckboxes = document.querySelectorAll('#activeBody input[type="checkbox"], #expiredBody input[type="checkbox"]');
+            allCheckboxes.forEach(cb => cb.checked = false);
+            updateSelectionCount();
+        }
+        
+        // NUEVO: Exportar SOLO las filas seleccionadas a CSV
+        function exportSelectedToCSV() {
+            const selectedItems = [];
+            
+            // Collect selected active items
+            currentActiveItems.forEach((item, index) => {
+                const checkbox = document.querySelector(`#activeBody tr[data-idx="${index}"] input[type="checkbox"]`);
+                if (checkbox && checkbox.checked) {
+                    selectedItems.push({ ...item, type: 'active' });
+                }
+            });
+            
+            // Collect selected expired items
+            currentExpiredItems.forEach((item, index) => {
+                const checkbox = document.querySelector(`#expiredBody tr[data-idx="${index}"] input[type="checkbox"]`);
+                if (checkbox && checkbox.checked) {
+                    selectedItems.push({ ...item, type: 'expired' });
+                }
+            });
+            
+            if (selectedItems.length === 0) {
+                alert('Please select at least one item to export');
+                return;
+            }
+            
+            // Define CSV headers
+            const headers = [
+                'Title', 
+                'Type', 
+                'Status', 
+                'Location', 
+                'Country', 
+                'Mode',
+                'Submission Deadline', 
+                'Submission Days Left',
+                'Abstract Deadline', 
+                'Abstract Days Left',
+                'Event Date',
+                'Keywords',
+                'URL'
+            ];
+            
+            // Create CSV rows
+            const rows = [headers];
+            
+            for (const item of selectedItems) {
+                const status = item.type === 'active' ? 
+                    (item.daysUntilSumision <= 14 ? 'Closing Soon' : 'Active') : 
+                    'Expired';
+                const itemType = (item.Type || 'conference').toLowerCase();
+                const typeLabel = itemType === 'journal' ? 'Journal' : 'Conference';
+                
+                rows.push([
+                    `"${(item.Titulo || '').replace(/"/g, '""')}"`,
+                    typeLabel,
+                    status,
+                    `"${(item.Ubicacion || '').replace(/"/g, '""')}"`,
+                    `"${(item.Pais || '').replace(/"/g, '""')}"`,
+                    `"${(item.Modalidad || '').replace(/"/g, '""')}"`,
+                    formatDateForCSV(item.FechaSumision),
+                    item.daysUntilSumision !== null ? item.daysUntilSumision : '',
+                    formatDateForCSV(item.FechaAbstracto),
+                    item.daysUntilAbstract !== null ? item.daysUntilAbstract : '',
+                    formatDateForCSV(item.FechaConferencia),
+                    `"${(item.PalabrasClave || '').replace(/"/g, '""')}"`,
+                    `"${(item.Link || '').replace(/"/g, '""')}"`
+                ]);
+            }
+            
+            // Convert to CSV string
+            const csvContent = rows.map(row => row.join(',')).join('\n');
+            
+            // Add BOM for UTF-8 encoding
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            // Create download link
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            const dateStr = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            link.setAttribute('download', `conference_tracker_selected_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+        
+        function formatDateForCSV(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        
+        function formatDays(days) {
+            if (days === null || days === undefined) return '—';
+            if (days < 0) return `<span class="days days-negative">Closed ${Math.abs(days)}d ago</span>`;
+            if (days === 0) return `<span class="days days-zero">Closes TODAY!</span>`;
+            if (days <= 14) return `<span class="days days-warning">${days} days left</span>`;
+            return `<span class="days days-positive">${days} days left</span>`;
+        }
+        
+        function getStatusClass(item) {
+            const daysUntil = item.daysUntilSumision;
+            if (daysUntil === null) return '';
+            if (daysUntil < 0) return 'expired';
+            if (daysUntil <= 14) return 'closing';
+            return 'active';
+        }
+        
+        function renderBothTables() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = allData;
+            if (searchTerm) {
+                filtered = filtered.filter(c => 
+                    (c.Titulo && c.Titulo.toLowerCase().includes(searchTerm)) ||
+                    (c.PalabrasClave && c.PalabrasClave.toLowerCase().includes(searchTerm)) ||
+                    (c.Ubicacion && c.Ubicacion.toLowerCase().includes(searchTerm)) ||
+                    (c.Pais && c.Pais.toLowerCase().includes(searchTerm)) ||
+                    (c.Type && c.Type.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            const active = filtered.filter(c => c.daysUntilSumision !== null && c.daysUntilSumision >= 0);
+            const expired = filtered.filter(c => c.daysUntilSumision !== null && c.daysUntilSumision < 0);
+            
+            // Sort active by closest deadline first
+            active.sort((a, b) => a.daysUntilSumision - b.daysUntilSumision);
+            
+            // Sort expired by most recently closed first
+            expired.sort((a, b) => b.daysUntilSumision - a.daysUntilSumision);
+            
+            // Store for export reference
+            currentActiveItems = active;
+            currentExpiredItems = expired;
+            
+            document.getElementById('activeCount').innerText = active.length;
+            document.getElementById('expiredCount').innerText = expired.length;
+            
+            renderTable('activeBody', active, 'active');
+            renderTable('expiredBody', expired, 'expired');
+        }
+        
+        function renderTable(tbodyId, items, tableType) {
+            const tbody = document.getElementById(tbodyId);
+            
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No items found</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            for (let idx = 0; idx < items.length; idx++) {
+                const item = items[idx];
+                const statusClass = getStatusClass(item);
+                const title = item.Link ? `<a href="${item.Link}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.Titulo || 'Untitled')}</a>` : escapeHtml(item.Titulo || 'Untitled');
+                
+                const locationPub = [item.Ubicacion, item.Pais, item.Modalidad].filter(Boolean).join(' · ') || '—';
+                
+                const itemType = (item.Type || 'conference').toLowerCase();
+                const typeLabel = itemType === 'journal' ? 'Journal' : 'Conference';
+                const typeClass = itemType === 'journal' ? 'type-journal' : 'type-conference';
+                
+                const submissionDate = formatDate(item.FechaSumision);
+                const submissionDays = formatDays(item.daysUntilSumision);
+                
+                const abstractDate = item.FechaAbstracto ? formatDate(item.FechaAbstracto) : '—';
+                const abstractDays = item.FechaAbstracto ? formatDays(item.daysUntilAbstract) : '';
+                
+                const eventDate = item.FechaConferencia ? formatDate(item.FechaConferencia) : '—';
+                
+                let keywordsHtml = '—';
+                if (item.keywordsArray && item.keywordsArray.length > 0) {
+                    keywordsHtml = item.keywordsArray.slice(0, 3).map(k => `<span class="keyword-tag">${escapeHtml(k)}</span>`).join('');
+                    if (item.keywordsArray.length > 3) {
+                        keywordsHtml += `<span class="keyword-tag">+${item.keywordsArray.length - 3}</span>`;
+                    }
+                }
+                
+                html += `
+                    <tr class="row-${statusClass}" data-idx="${idx}">
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="row-checkbox" data-id="${item.ID || idx}" data-table="${tableType}">
+                        </td>
+                        <td class="title-cell">
+                            <div class="title-wrapper">
+                                ${title}
+                                <span class="type-badge ${typeClass}">${typeLabel}</span>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(locationPub)}</td>
+                        <td>
+                            <div class="date-main">${submissionDate}</div>
+                            <div class="date-sub">${submissionDays}</div>
+                        </td>
+                        <td>
+                            <div class="date-main">${abstractDate}</div>
+                            ${abstractDays ? `<div class="date-sub">${abstractDays}</div>` : ''}
+                        </td>
+                        <td>${eventDate}</td>
+                        <td class="keywords-cell">${keywordsHtml}</td>
+                    </tr>
+                `;
+            }
+            
+            tbody.innerHTML = html;
+            
+            // Add event listeners to checkboxes
+            const checkboxes = tbody.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateSelectionCount);
+            });
+            
+            // Update selection count and select-all state
+            updateSelectionCount();
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                allData = await response.json();
+                renderBothTables();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('activeBody').innerHTML = '<tr class="empty-row"><td colspan="7">❌ Error loading data. Please check your API URL.</td></tr>';
+                document.getElementById('expiredBody').innerHTML = '<tr class="empty-row"><td colspan="7">❌ Error loading data. Please check your API URL.</td></tr>';
+            }
+        }
+        
+        // Setup select-all checkboxes after DOM is ready
+        function setupSelectAllCheckboxes() {
+            const selectAllActive = document.getElementById('selectAllActive');
+            const selectAllExpired = document.getElementById('selectAllExpired');
+            
+            if (selectAllActive) {
+                selectAllActive.addEventListener('change', (e) => {
+                    selectAllInTable('active', e.target.checked);
+                });
+            }
+            
+            if (selectAllExpired) {
+                selectAllExpired.addEventListener('change', (e) => {
+                    selectAllInTable('expired', e.target.checked);
+                });
+            }
+        }
+        
+        // Auto-refresh every 5 minutes
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(loadData, 300000);
+        }
+        
+        // Initial load
+        loadData();
+        startAutoRefresh();
+        
+        // Setup select-all after tables render (using mutation observer)
+        const observer = new MutationObserver(() => {
+            setupSelectAllCheckboxes();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        setupSelectAllCheckboxes();
+    </script>
 </body>
 </html>
